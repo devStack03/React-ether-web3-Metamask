@@ -12,7 +12,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ETHBalance from './components/ethereum/ETHBalance';
 import ETHBalanceSWR from './components/ethereum/ETHBalanceSWR';
 import ReadERC20 from './components/ethereum/ReadERC20';
-const addressContract='0x5fbdb2315678afecb367f032d93f642f64180aa3'
+import { USDC_ADDRESS } from './constants/contracts';
+const addressContract='0xae98409187D2dbb568a963683c3aDBfb2A61AD81'
 
 
 function App() {
@@ -40,7 +41,7 @@ function App() {
       <ConnectMetamask />
       <ETHBalance />
       <ETHBalanceSWR />
-      <ReadERC20 addressContract={addressContract} />
+      <ReadERC20 addressContract={USDC_ADDRESS} />
     </div>
   );
 }

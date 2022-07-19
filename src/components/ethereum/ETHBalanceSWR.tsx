@@ -1,12 +1,17 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers'
 import { formatEther } from '@ethersproject/units'
 import useSWR from 'swr'
+import { useERC20Balance } from '../../hooks/useERC20Balance'
 
 const fetcher = (library: any) => (...args: any) => {
     const [method, ...params] = args;
     return library[method](...params)
+}
+
+interface Props {
+    children?: React.ReactNode[]
 }
 
 const ETHBalanceSWR = () => {
@@ -15,7 +20,9 @@ const ETHBalanceSWR = () => {
     const { data: balance, mutate } = useSWR(['getBalance', account, 'latest'], {
         fetcher: fetcher(library),
     });
+    const [usdcBalance, fetchERC20] = useERC20Balance();
     console.log('ETHBalanceSWR', balance);
+    console.log('usdcBalance', usdcBalance);
     useEffect(() => {
         if (!library) return;
 
@@ -34,11 +41,20 @@ const ETHBalanceSWR = () => {
 
     return (
         <div>
-            {active && balance ? (
-                <p>ETH in account: {parseFloat(formatEther(balance)).toFixed(3)} {chainId===31337 ? 'Test':''} ETH</p>
-            ) : (
-                <p>ETH in account:</p>
-            )}
+            <div>
+                {active && balance ? (
+                    <p>ETH in account: {parseFloat(formatEther(balance)).toFixed(3)} {chainId === 31337 ? 'Test' : ''} ETH</p>
+                ) : (
+                    <p>ETH in account:</p>
+                )}
+            </div>
+            <div>
+                {active && usdcBalance ? (
+                    <p>USDC in account: {usdcBalance.toString()} usdc</p>
+                ) : (
+                    <p>USDC in account:</p>
+                )}
+            </div>
         </div>
     )
 }
