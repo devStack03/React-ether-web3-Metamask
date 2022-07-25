@@ -8,6 +8,8 @@ import { StyledEngineProvider } from '@mui/material/styles';
 import './index.scss';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { Provider } from 'react-redux';
+import store from './app/store'
 /*
 We add a react context provider Web3ReactProvider
 Blockchain provider (library) is an Ethers.js Web3Provider which we can add connector and activate later using hooks.
@@ -22,11 +24,13 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
-  <Web3ReactProvider getLibrary={getLibrary}>
-    <StyledEngineProvider injectFirst>
-      <App />
-    </StyledEngineProvider>
-  </Web3ReactProvider>
+  <Provider store={store}>
+    <Web3ReactProvider getLibrary={getLibrary}>
+      <StyledEngineProvider injectFirst>
+        <App />
+      </StyledEngineProvider>
+    </Web3ReactProvider>
+  </Provider>
 );
 
 // If you want to start measuring performance in your app, pass a function
