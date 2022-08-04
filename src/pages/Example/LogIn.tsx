@@ -1,7 +1,41 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { LockClosedIcon } from '@heroicons/react/solid'
-
+import userService from '../../services/user.service';
+import authService from '../../services/auth.service';
+import { useAuth } from '../../contexts/AuthProvider';
 const LogIn = () => {
+    let navigate = useNavigate();
+    let auth = useAuth();
+    const [inputs, setInputs] = useState({
+        email: '',
+        password: '',
+        rememberMe: false,
+    });
+
+    const handleSubmit = (e: any) => {
+        e.preventDefault();
+        if (inputs.password.length > 5) {
+            authService.login(inputs).then((data: any) => {
+                console.log(data);
+                localStorage.setItem("auth_token", data.data.access_token);
+                auth.signin(data.data.access_token, () => {
+                    console.log('log here');
+                    navigate('/', {replace: true});
+                });
+            }).catch((error: any) => {
+                console.log(error);
+            });
+        }
+    }
+
+    const handleChange = (event: any) => {
+        const value = event.target.value;
+        const name = event.target.name;
+
+        setInputs(values => ({...values, [name]: value}));
+    };
+
     return (
         <div className="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md w-full space-y-8">
@@ -19,7 +53,7 @@ const LogIn = () => {
                         </a>
                     </p>
                 </div>
-                <form className="mt-8 space-y-6" action="#" method="POST">
+                <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                     <input type="hidden" name="remember" defaultValue="true" />
                     <div className="rounded-md shadow-sm -space-y-px">
                         <div>
@@ -34,6 +68,8 @@ const LogIn = () => {
                                 required
                                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                                 placeholder="Email address"
+                                value={inputs.email}
+                                onChange={handleChange}
                             />
 
                         </div>
@@ -50,6 +86,9 @@ const LogIn = () => {
                                 className="appearance-none rounded-none relative block w-full
                                  px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                                 placeholder="Password"
+                                value={inputs.password}
+                                onChange={handleChange}
+
                             />
                         </div>
                     </div>
@@ -60,6 +99,8 @@ const LogIn = () => {
                                 name="remember-me"
                                 type="checkbox"
                                 className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                                checked={inputs.rememberMe}
+                                onChange={handleChange}
                             />
                             <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
                                 Remember me
@@ -83,6 +124,12 @@ const LogIn = () => {
                             </span>
                             Sign in
                         </button>
+                    </div>
+                    <div>
+                        <p className="text-sm">Have not registered yet? Please &nbsp;
+                            <Link to="/signup" className="font-semibold underline ">Click</Link>
+                            &nbsp; here to new signup.
+                        </p>
                     </div>
                 </form>
             </div>
